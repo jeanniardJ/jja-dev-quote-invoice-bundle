@@ -1,0 +1,240 @@
+{% extends '@JjaDevQuoteInvoice/base.html.twig' %}
+
+{% block title %}Tableau de bord - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-speedometer2"></i> Tableau de bord
+        </h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Factures totales</h5>
+                        <h2>{{ dashboard_stats.total_invoices ?? 0 }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-receipt-cutoff fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Factures payées</h5>
+                        <h2>{{ dashboard_stats.paid_invoices ?? 0 }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-check-circle fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">En retard</h5>
+                        <h2>{{ dashboard_stats.overdue_invoices ?? 0 }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-exclamation-triangle fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">CA du mois</h5>
+                        <h2>{{ (dashboard_stats.monthly_revenue ?? 0)|number_format(0, ',', ' ') }}€</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-currency-euro fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts and Recent Activity -->
+<div class="row">
+    <!-- Recent Quotes -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-text"></i> Devis récents
+                </h5>
+                <a href="#" class="btn btn-sm btn-outline-primary" onclick="alert('Fonctionnalité en cours de développement')">
+                    Voir tous
+                </a>
+            </div>
+            <div class="card-body">
+                {% if recent_quotes is empty %}
+                    <p class="text-muted text-center py-3">
+                        <i class="bi bi-file-text fs-1 d-block mb-2"></i>
+                        Aucun devis pour le moment
+                    </p>
+                {% else %}
+                    <div class="list-group list-group-flush">
+                        {% for quote in recent_quotes %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ quote.number }}</h6>
+                                <p class="mb-1">{{ quote.client.displayName }}</p>
+                                <small class="text-muted">{{ quote.createdAt|date('d/m/Y') }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-secondary">{{ quote.status|title }}</span>
+                                <div class="text-muted small">
+                                    {{ quote.totalIncludingTax|number_format(2, ',', ' ') }}€
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Invoices -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-receipt-cutoff"></i> Factures récentes
+                </h5>
+                <a href="#" class="btn btn-sm btn-outline-primary" onclick="alert('Fonctionnalité en cours de développement')">
+                    Voir toutes
+                </a>
+            </div>
+            <div class="card-body">
+                {% if recent_invoices is empty %}
+                    <p class="text-muted text-center py-3">
+                        <i class="bi bi-receipt-cutoff fs-1 d-block mb-2"></i>
+                        Aucune facture pour le moment
+                    </p>
+                {% else %}
+                    <div class="list-group list-group-flush">
+                        {% for invoice in recent_invoices %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ invoice.number }}</h6>
+                                <p class="mb-1">{{ invoice.client.displayName }}</p>
+                                <small class="text-muted">{{ invoice.createdAt|date('d/m/Y') }}</small>
+                            </div>
+                            <div class="text-end">
+                                {% set status_class = 'secondary' %}
+                                {% if invoice.status == 'paid' %}
+                                    {% set status_class = 'success' %}
+                                {% elseif invoice.status == 'overdue' %}
+                                    {% set status_class = 'danger' %}
+                                {% elseif invoice.status == 'sent' %}
+                                    {% set status_class = 'warning' %}
+                                {% endif %}
+                                <span class="badge bg-{{ status_class }}">{{ invoice.status|title }}</span>
+                                <div class="text-muted small">
+                                    {{ invoice.totalIncludingTax|number_format(2, ',', ' ') }}€
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts -->
+{% if overdue_invoices is not empty or expired_quotes is not empty %}
+<div class="row">
+    {% if overdue_invoices is not empty %}
+    <div class="col-lg-6 mb-4">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Factures en retard ({{ overdue_invoices|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for invoice in overdue_invoices|slice(0, 5) %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ invoice.number }}</h6>
+                            <p class="mb-1">{{ invoice.client.displayName }}</p>
+                            <small class="text-danger">Échéance : {{ invoice.dueDate|date('d/m/Y') }}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-muted">
+                                {{ invoice.totalIncludingTax|number_format(2, ',', ' ') }}€
+                            </div>
+                            <small class="text-danger">
+                                {{ invoice.daysOverdue }} jour(s) de retard
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if expired_quotes is not empty %}
+    <div class="col-lg-6 mb-4">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock"></i> Devis expirés ({{ expired_quotes|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for quote in expired_quotes|slice(0, 5) %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ quote.number }}</h6>
+                            <p class="mb-1">{{ quote.client.displayName }}</p>
+                            <small class="text-danger">Expiré le : {{ quote.validUntil|date('d/m/Y') }}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="text-muted">
+                                {{ quote.totalIncludingTax|number_format(2, ',', ' ') }}€
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}
