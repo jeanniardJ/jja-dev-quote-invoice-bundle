@@ -1,0 +1,95 @@
+<?php
+
+namespace JjaDev\QuoteInvoiceBundle\DependencyInjection;
+
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+
+class Configuration implements ConfigurationInterface
+{
+    public function getConfigTreeBuilder(): TreeBuilder
+    {
+        $treeBuilder = new TreeBuilder('jja_dev_quote_invoice');
+
+        $treeBuilder->getRootNode()
+            ->children()
+                ->scalarNode('quote_number_format')
+                    ->defaultValue('DEVIS-%06d')
+                    ->info('Format for quote numbers (sprintf format)')
+                ->end()
+                ->scalarNode('invoice_number_format')
+                    ->defaultValue('FACT-%06d')
+                    ->info('Format for invoice numbers (sprintf format)')
+                ->end()
+                ->scalarNode('default_currency')
+                    ->defaultValue('EUR')
+                    ->info('Default currency code')
+                ->end()
+                ->scalarNode('company_name')
+                    ->defaultValue('')
+                    ->info('Company name for documents')
+                ->end()
+                ->scalarNode('company_address')
+                    ->defaultValue('')
+                    ->info('Company address for documents')
+                ->end()
+                ->arrayNode('pdf_settings')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('format')
+                            ->defaultValue('A4')
+                            ->info('PDF format')
+                        ->end()
+                        ->scalarNode('orientation')
+                            ->defaultValue('portrait')
+                            ->info('PDF orientation')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('email_settings')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('from_email')
+                            ->defaultValue('noreply@example.com')
+                            ->info('Default from email address')
+                        ->end()
+                        ->scalarNode('from_name')
+                            ->defaultValue('Quote Invoice System')
+                            ->info('Default from name')
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('features')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enable_quotes')
+                            ->defaultTrue()
+                            ->info('Enable quote management')
+                        ->end()
+                        ->booleanNode('enable_invoices')
+                            ->defaultTrue()
+                            ->info('Enable invoice management')
+                        ->end()
+                        ->booleanNode('enable_clients')
+                            ->defaultTrue()
+                            ->info('Enable client management')
+                        ->end()
+                        ->booleanNode('enable_products')
+                            ->defaultTrue()
+                            ->info('Enable product management')
+                        ->end()
+                        ->booleanNode('enable_pdf_export')
+                            ->defaultTrue()
+                            ->info('Enable PDF export functionality')
+                        ->end()
+                        ->booleanNode('enable_email_notifications')
+                            ->defaultTrue()
+                            ->info('Enable email notifications')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $treeBuilder;
+    }
+}

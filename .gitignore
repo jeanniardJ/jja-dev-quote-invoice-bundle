@@ -1,0 +1,52 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# IDE files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+/var/log/
+
+# Cache
+/var/cache/
+/.phpunit.result.cache
+
+# Build artifacts
+/build/
+/dist/
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# PHPUnit
+/phpunit.xml.dist.bak
+/.phpunit.result.cache
+
+# Composer temporary files
+composer.phar
+composer.lock.tmp
+
+# Bundle specific
+/public/bundles/
