@@ -1,5 +1,5 @@
 {
-    "name": "jeanniard/quote-invoice-bundle",
+    "name": "jeanniard/jja-dev-quote-invoice-bundle",
     "version": "0.1.0",
     "description": "Symfony bundle for comprehensive quote and invoice management",
     "type": "symfony-bundle",
